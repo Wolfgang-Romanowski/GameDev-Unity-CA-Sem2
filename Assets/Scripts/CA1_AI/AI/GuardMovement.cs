@@ -10,6 +10,8 @@ public class GuardMovement : MonoBehaviour
     public bool ReachedDestination => agent.remainingDistance < 0.5f && !agent.pathPending;
     public bool NearDestination(float dist) => agent.remainingDistance < dist && !agent.pathPending;
     public bool IsStuck { get; private set; }
+    //pathpartial means reached closest reachable point, path invalid means no path exists
+    public bool HasValidPath => agent.hasPath && agent.pathStatus == NavMeshPathStatus.PathComplete;
 
     private NavMeshAgent agent;
     private float stuckTimer;

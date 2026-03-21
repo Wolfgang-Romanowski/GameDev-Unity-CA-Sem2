@@ -4,7 +4,7 @@ public class GoalZone : MonoBehaviour
 {
     private GameUI gameUI;
 
-    void Start()
+    void Awake()
     {
         gameUI = GetComponent<GameUI>();
     }

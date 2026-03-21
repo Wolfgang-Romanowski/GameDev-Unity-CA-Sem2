@@ -150,6 +150,7 @@ public class GuardAI : MonoBehaviour
         switch (newState)
         {
             case GuardState.Patrol:
+                if (waypoints.Length > 0)
                 movement.SetGoal(waypoints[currentWaypointIndex].position);
                 break;
             case GuardState.Investigate:
@@ -173,7 +174,7 @@ public class GuardAI : MonoBehaviour
 
         movement.ClearPath();
 
-        if (CurrentState == GuardState.Patrol)
+        if (CurrentState == GuardState.Patrol && waypoints.Length > 0)
         {
             currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
             movement.SetGoal(waypoints[currentWaypointIndex].position);
