@@ -7,7 +7,7 @@ public class LeafChase : BTNode
     private Blackboard blackboard;
     private float chaseSpeed;
     private float loseSightDelay;
-    private float loseSightTimer;
+    private float loseSightDeadline = -1f;
 
     public LeafChase(GuardAI guardAI, GuardMovement movement,
                      Blackboard blackboard, float chaseSpeed,
@@ -18,7 +18,6 @@ public class LeafChase : BTNode
         this.blackboard     = blackboard;
         this.chaseSpeed     = chaseSpeed;
         this.loseSightDelay = loseSightDelay;
-        this.loseSightTimer = loseSightDelay;
     }
 
     public override BTStatus Tick()
@@ -29,22 +28,29 @@ public class LeafChase : BTNode
 
         if (blackboard.CanSeePlayer && blackboard.TargetTransform != null)
         {
-            loseSightTimer = loseSightDelay;
+            // actively seeing player — reset deadline and keep chasing
+            loseSightDeadline = -1f;
             movement.SetGoalIfFarEnough(blackboard.TargetTransform.position);
             blackboard.CurrentGoal = blackboard.TargetTransform.position;
         }
         else
         {
-            loseSightTimer -= Time.deltaTime;
+            // start deadline if not already counting
+            if (loseSightDeadline < 0f)
+                loseSightDeadline = Time.time + loseSightDelay;
+
             movement.SetGoalIfFarEnough(blackboard.LastKnownPosition, 1f);
             blackboard.CurrentGoal = blackboard.LastKnownPosition;
 
-            if (loseSightTimer <= 0f)
+            if (Time.time >= loseSightDeadline)
+            {
+                loseSightDeadline = -1f;
                 return BTStatus.Failure;
+            }
         }
 
         return BTStatus.Running;
     }
 
-    public void ResetTimer() => loseSightTimer = loseSightDelay;
+    public void ResetDeadline() => loseSightDeadline = -1f;
 }

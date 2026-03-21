@@ -63,14 +63,20 @@ public class GuardSensor : MonoBehaviour
     //retry periodically so we recover if the player reference breaks
     void TryRefindPlayer()
     {
-        playerSearchTimer -= Time.deltaTime;
-        if (playerSearchTimer <= 0f)
-        {
-            GameObject playerObj = GameObject.FindWithTag("Player");
-            if (playerObj != null) Player = playerObj.transform;
-            playerSearchTimer = 1f;
-        }
+    // clear stale blackboard values while player ref is missing
+    if (blackboard != null)
+    {
+        blackboard.CanSeePlayer = false;
+        blackboard.PlayerInHearingRange = false;
     }
+
+    playerSearchTimer -= Time.deltaTime;
+    if (playerSearchTimer <= 0f)
+    {
+        GameObject playerObj = GameObject.FindWithTag("Player");
+        if (playerObj != null) Player = playerObj.transform;
+        playerSearchTimer = 1f;
+    }}
 
     void OnDrawGizmosSelected()
     {

@@ -19,10 +19,32 @@ public class GuardBT : MonoBehaviour
     private BTNode root;
     private LeafChase leafChase;
 
-    void Update()
+void Update()
+{
+    movement.UpdatePathLine(guardAI.GetStateColor());
+    HandleStuck();
+}
+
+void HandleStuck()
+{
+    if (!movement.IsStuck) return;
+
+    movement.ClearPath();
+
+    if (guardAI.CurrentState == GuardState.Patrol && waypoints != null && waypoints.Length > 0)
     {
-        movement.UpdatePathLine(guardAI.GetStateColor());
+        movement.SetGoal(waypoints[0].position);
+        blackboard.CurrentGoal = waypoints[0].position;
     }
+    else
+    {
+        //drop suspicion so BT falls back to patrol till next tick
+        blackboard.SuspicionLevel = 0f;
+        guardAI.SetState(GuardState.Patrol);
+        if (waypoints != null && waypoints.Length > 0)
+            movement.SetGoal(waypoints[0].position);
+    }
+}
 
     void Start()
     {

@@ -5,6 +5,8 @@ public class GuardVisionCone : MonoBehaviour
 {
     [SerializeField] private float viewDistance = 15f;
     [SerializeField] private float viewAngle = 55f;
+    
+    [Range(10, 80)]
     [SerializeField] private int rayCount = 80;
 
     [SerializeField] private Color patrolColor = new Color(0f, 1f, 0f, 0.2f);
