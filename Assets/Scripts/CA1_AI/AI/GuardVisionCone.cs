@@ -38,77 +38,73 @@ public class GuardVisionCone : MonoBehaviour
         UpdateColor();
     }
 
-    void DrawVisionCone()
-    {
-        float angleStep = (viewAngle * 2f) / rayCount;
-        Vector3[] vertices = new Vector3[rayCount + 2];
-        int[] triangles = new int[rayCount * 3];
-
-        // cone origin at the guards position
-        vertices[0] = Vector3.zero;
-
-        Transform guard = transform.parent;
-        float guardYAngle = guard.eulerAngles.y;
-
-        for (int i = 0; i <= rayCount; i++)
+        void DrawVisionCone()
         {
-            float currentAngle = -viewAngle + (angleStep * i);
-            float worldAngle = guardYAngle + currentAngle;
-            float rad = worldAngle * Mathf.Deg2Rad;
-            Vector3 worldDir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
+            float angleStep = (viewAngle * 2f) / rayCount;
+            Vector3[] vertices = new Vector3[rayCount + 2];
+            int[] triangles = new int[rayCount * 3];
+            vertices[0] = Vector3.zero;
 
-            float hitDistance = viewDistance;
+            Transform guard = transform.parent;
+            float guardYAngle = guard.eulerAngles.y;
 
-            // cast at multiple heights so the cone clips against walls properly
-            for (int h = 0; h < 3; h++)
+            for (int i = 0; i <= rayCount; i++)
             {
-                float height = 0.3f + (h * 0.5f);
-                Vector3 origin = guard.position + Vector3.up * height;
+                float currentAngle = -viewAngle + (angleStep * i);
+                float worldAngle = guardYAngle + currentAngle;
+                float rad = worldAngle * Mathf.Deg2Rad;
+                Vector3 worldDir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
 
-                if (Physics.Raycast(origin, worldDir, out RaycastHit hit, viewDistance))
+                float hitDistance = viewDistance;
+
+                //cast at multiple heights so cone clips against walls properly
+                for (int h = 0; h < 3; h++)
                 {
-                    if (!hit.transform.CompareTag("Player") && hit.distance < hitDistance)
-                        hitDistance = hit.distance;
+                    float height = 0.3f + (h * 0.5f);
+                    Vector3 origin = guard.position + Vector3.up * height;
+
+                    if (Physics.Raycast(origin, worldDir, out RaycastHit hit, viewDistance))
+                    {
+                        if (!hit.transform.CompareTag("Player") && hit.distance < hitDistance)
+                            hitDistance = hit.distance;
+                    }
                 }
+
+                //convert back to local space for the vertex
+                float localRad = currentAngle * Mathf.Deg2Rad;
+                Vector3 localDir = new Vector3(Mathf.Sin(localRad), 0f, Mathf.Cos(localRad));
+                vertices[i + 1] = localDir * hitDistance;
             }
 
-            // convert back to local space for the mesh vertex
-            float localRad = currentAngle * Mathf.Deg2Rad;
-            Vector3 localDir = new Vector3(Mathf.Sin(localRad), 0f, Mathf.Cos(localRad));
-            vertices[i + 1] = localDir * hitDistance;
+            for (int i = 0; i < rayCount; i++)
+            {
+                triangles[i * 3] = 0;
+                triangles[i * 3 + 1] = i + 1;
+                triangles[i * 3 + 2] = i + 2;
+            }
+
+            mesh.Clear();
+            mesh.vertices = vertices;
+            mesh.triangles = triangles;
+            mesh.RecalculateNormals();
         }
 
-        for (int i = 0; i < rayCount; i++)
-        {
-            triangles[i * 3] = 0;
-            triangles[i * 3 + 1] = i + 1;
-            triangles[i * 3 + 2] = i + 2;
-        }
-
-        mesh.Clear();
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.RecalculateNormals();
-    }
-
-    void UpdateColor()
+        void UpdateColor()
     {
         if (coneMaterial == null || guardAI == null) return;
 
-        if (guardAI.CanSeePlayer)
-        {
-            coneMaterial.color = Color.Lerp(coneMaterial.color, detectColor, Time.deltaTime * 10f);
-            return;
-        }
-
         Color targetColor = guardAI.CurrentState switch
         {
-            GuardState.Patrol => patrolColor,
+            GuardState.Patrol      => patrolColor,
             GuardState.Investigate => investigateColor,
-            GuardState.Chase => chaseColor,
-            GuardState.Search => searchColor,
-            _ => patrolColor
+            GuardState.Chase       => chaseColor,
+            GuardState.Search      => searchColor,
+            _                      => patrolColor
         };
+
+        //flash detect colour when in Chase
+        if (guardAI.CurrentState == GuardState.Chase)
+            targetColor = Color.Lerp(targetColor, detectColor, Time.deltaTime * 10f);
 
         coneMaterial.color = Color.Lerp(coneMaterial.color, targetColor, Time.deltaTime * 5f);
     }
