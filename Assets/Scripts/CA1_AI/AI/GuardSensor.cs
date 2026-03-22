@@ -50,20 +50,21 @@ public class GuardSensor : MonoBehaviour
             }
         }
 
-        // always write to blackboard regardless of sight angle
         if (blackboard != null)
         {
             blackboard.CanSeePlayer = CanSeePlayer;
             blackboard.PlayerInHearingRange = PlayerInHearingRange;
-            blackboard.TargetTransform = Player;
-            if (CanSeePlayer) blackboard.LastKnownPosition = Player.position;
+
+            if (CanSeePlayer || PlayerInHearingRange)
+                blackboard.TargetTransform = Player;
+            if (CanSeePlayer)
+                blackboard.LastKnownPosition = Player.position;
         }
     }
 
     //retry periodically so we recover if the player reference breaks
     void TryRefindPlayer()
     {
-    // clear stale blackboard values while player ref is missing
     if (blackboard != null)
     {
         blackboard.CanSeePlayer = false;

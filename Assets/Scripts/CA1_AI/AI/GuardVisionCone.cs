@@ -7,6 +7,7 @@ public class GuardVisionCone : MonoBehaviour
     [SerializeField] private float viewAngle = 55f;
     
     [Range(10, 80)]
+    [Tooltip("Higher = smoother cone but more raycasts. 80 rays × 3 heights = 240 casts/frame. Acceptable for single guard; would need LOD culling at scale.")]
     [SerializeField] private int rayCount = 80;
 
     [SerializeField] private Color patrolColor = new Color(0f, 1f, 0f, 0.2f);
@@ -14,6 +15,8 @@ public class GuardVisionCone : MonoBehaviour
     [SerializeField] private Color chaseColor = new Color(1f, 0f, 0f, 0.35f);
     [SerializeField] private Color searchColor = new Color(1f, 0.5f, 0f, 0.25f);
     [SerializeField] private Color detectColor = new Color(1f, 0f, 0f, 0.5f);
+
+    private const int HeightSteps = 3;
 
     private Mesh mesh;
     private Material coneMaterial;
@@ -60,7 +63,7 @@ public class GuardVisionCone : MonoBehaviour
                 float hitDistance = viewDistance;
 
                 //cast at multiple heights so cone clips against walls properly
-                for (int h = 0; h < 3; h++)
+                for (int h = 0; h < HeightSteps; h++)
                 {
                     float height = 0.3f + (h * 0.5f);
                     Vector3 origin = guard.position + Vector3.up * height;

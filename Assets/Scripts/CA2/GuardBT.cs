@@ -10,41 +10,42 @@ public class GuardBT : MonoBehaviour
     [SerializeField] private SuspicionSystem suspicion;
     [SerializeField] private Transform[] waypoints;
 
-    [SerializeField] private float patrolSpeed    = 2f;
-    [SerializeField] private float chaseSpeed     = 5f;
-    [SerializeField] private float loseSightDelay = 1.5f;
-    [SerializeField] private float searchTimeout  = 10f;
-    [SerializeField] private float btTickRate     = 0.1f;
+    [SerializeField] private float patrolSpeed         = 2f;
+    [SerializeField] private float chaseSpeed          = 5f;
+    [SerializeField] private float loseSightDelay      = 1.5f;
+    [SerializeField] private float searchTimeout       = 10f;
+    [SerializeField] private float btTickRate          = 0.1f;
+    [SerializeField] private float investigateCooldown = 5f;
 
     private BTNode root;
     private LeafChase leafChase;
 
-void Update()
-{
-    movement.UpdatePathLine(guardAI.GetStateColor());
-    HandleStuck();
-}
-
-void HandleStuck()
-{
-    if (!movement.IsStuck) return;
-
-    movement.ClearPath();
-
-    if (guardAI.CurrentState == GuardState.Patrol && waypoints != null && waypoints.Length > 0)
+    void Update()
     {
-        movement.SetGoal(waypoints[0].position);
-        blackboard.CurrentGoal = waypoints[0].position;
+        movement.UpdatePathLine(guardAI.GetStateColor());
+        HandleStuck();
     }
-    else
+
+    void HandleStuck()
     {
-        //drop suspicion so BT falls back to patrol till next tick
-        blackboard.SuspicionLevel = 0f;
-        guardAI.SetState(GuardState.Patrol);
-        if (waypoints != null && waypoints.Length > 0)
+        if (!movement.IsStuck) return;
+
+        movement.ClearPath();
+
+        if (guardAI.CurrentState == GuardState.Patrol && waypoints != null && waypoints.Length > 0)
+        {
             movement.SetGoal(waypoints[0].position);
+            blackboard.CurrentGoal = waypoints[0].position;
+        }
+        else
+        {
+            blackboard.SuspicionLevel = 0f;
+            blackboard.IsSearching = false;
+            guardAI.SetState(GuardState.Patrol);
+            if (waypoints != null && waypoints.Length > 0)
+                movement.SetGoal(waypoints[0].position);
+        }
     }
-}
 
     void Start()
     {
@@ -54,23 +55,20 @@ void HandleStuck()
             new LeafSearch(guardAI, movement, blackboard, patrolSpeed),
             searchTimeout);
 
-        var chaseBranch = new BTSequence("ChaseBranch", new List<BTNode>
-        {
-            new ConditionalAbortDecorator("AbortIfNotAlert",
-                leafChase,
-                () => blackboard.SuspicionLevel >= suspicion.ChaseThreshold
-                   || blackboard.CanSeePlayer),
-        });
+        var chaseBranch = new ConditionalAbortDecorator("AbortIfNotAlert",
+            leafChase,
+            () => blackboard.CanSeePlayer
+               || (blackboard.SuspicionLevel >= suspicion.ChaseThreshold && !blackboard.IsSearching));
 
-        var investigateBranch = new BTSequence("InvestigateBranch", new List<BTNode>
-        {
+        var investigateBranch = new CooldownDecorator("InvestigateCooldown",
             new ConditionalAbortDecorator("AbortIfNotSuspicious",
                 new LeafInvestigate(guardAI, movement, blackboard, patrolSpeed),
-                () => blackboard.SuspicionLevel >= suspicion.InvestigateThreshold),
-        });
+                () => !blackboard.IsSearching && blackboard.SuspicionLevel >= suspicion.InvestigateThreshold),
+            investigateCooldown);
 
         var searchBranch = new BTSequence("SearchBranch", new List<BTNode>
         {
+            new ConditionNode("IsSearching", () => blackboard.IsSearching),
             searchWithTimeout
         });
 

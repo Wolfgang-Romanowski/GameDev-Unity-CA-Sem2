@@ -9,7 +9,7 @@ public class SlidingDoor : MonoBehaviour
     [SerializeField] private float slideDistance = 3f;
     [SerializeField] private float slideSpeed = 3f;
     [SerializeField] private float stayOpenTime = 3f;
-    [SerializeField] private float interactDistance = 4f;
+    [SerializeField] private float interactDistance = 6f;
 
     private Vector3 closedPosition;
     private Vector3 openPosition;
@@ -18,7 +18,7 @@ public class SlidingDoor : MonoBehaviour
     private bool hasBeenUnlocked = false;
     private Transform playerTransform;
     private Transform guardTransform;
-    private NavMeshAgent guardAgent;
+    private GuardMovement guardMovement;
 
     void Start()
     {
@@ -32,7 +32,7 @@ public class SlidingDoor : MonoBehaviour
         if (guard != null)
         {
             guardTransform = guard.transform;
-            guardAgent = guard.GetComponent<NavMeshAgent>();
+            guardMovement = guard.GetComponent<GuardMovement>();
         }
 
         if (obstacle != null) obstacle.enabled = true;
@@ -70,15 +70,6 @@ public class SlidingDoor : MonoBehaviour
             StartCoroutine(CloseDoor());
     }
 
-    void ForceGuardRepath()
-    {
-        if (guardAgent == null || !guardAgent.hasPath) return;
-
-        Vector3 dest = guardAgent.destination;
-        guardAgent.ResetPath();
-        guardAgent.SetDestination(dest);
-    }
-
     IEnumerator OpenDoor()
     {
         isAnimating = true;
@@ -100,7 +91,8 @@ public class SlidingDoor : MonoBehaviour
         isOpen = true;
         isAnimating = false;
 
-        ForceGuardRepath();
+        if (guardMovement != null)
+            guardMovement.ForceRepath();
     }
 
     IEnumerator CloseDoor()
@@ -118,6 +110,7 @@ public class SlidingDoor : MonoBehaviour
         transform.position = closedPosition;
 
         //once unlocked the obstacle stays off so the guard can always reopen
+        //the guard triggers the door open by proximity before reaching it
         if (!hasBeenUnlocked && obstacle != null)
             obstacle.enabled = true;
 

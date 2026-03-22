@@ -910,7 +910,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.016666668
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: a50706efda0c05e4ba2f413944f3c9c2, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &222472637
 GameObject:
@@ -1106,11 +1106,11 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 1
-  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_Extents: {x: 0.5, y: 0.55, z: 0.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
   m_CarveOnlyStationary: 1
-  m_Center: {x: -0.5, y: 0, z: 5}
+  m_Center: {x: -0.4, y: -0.1, z: 5}
   m_TimeToStationary: 0.5
 --- !u!1 &288303367 stripped
 GameObject:
@@ -3225,7 +3225,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.016666668
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: 3fcba774413747a48b915a197e1d1ffc, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &833147587 stripped
 GameObject:
@@ -3723,7 +3723,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.016666668
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: 4705a4ea7f6754b4f8bc83f4929928b6, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &901618191
 GameObject:
@@ -6910,6 +6910,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f090b756891137341996b03e20e94b8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoalZone
+  gameUI: {fileID: 0}
 --- !u!1001 &1900213512
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7628,6 +7629,7 @@ MonoBehaviour:
   loseSightDelay: 1.5
   searchTimeout: 10
   btTickRate: 0.1
+  investigateCooldown: 5
 --- !u!114 &2022599855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7802,8 +7804,8 @@ BoxCollider:
   m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.99999994, y: 0.99999994, z: 1}
-  m_Center: {x: -0.00000023841858, y: 0, z: -0.0000076293945}
+  m_Size: {x: 1, y: 1, z: 2.416552}
+  m_Center: {x: 8.918954e-11, y: 0, z: -0.7082759}
 --- !u!1 &2042398847
 GameObject:
   m_ObjectHideFlags: 0

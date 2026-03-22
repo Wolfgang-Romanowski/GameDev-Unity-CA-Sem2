@@ -7,6 +7,7 @@ public class LeafSearch : BTNode
     private Blackboard blackboard;
     private float patrolSpeed;
     private float wanderRadius;
+    private bool hasGoal = false;
 
     public LeafSearch(GuardAI guardAI, GuardMovement movement,
                       Blackboard blackboard, float patrolSpeed,
@@ -22,13 +23,26 @@ public class LeafSearch : BTNode
     public override BTStatus Tick()
     {
         blackboard.ActiveBTNode = "Search";
+        blackboard.IsSearching = true;
         guardAI.SetState(GuardState.Search);
         movement.SetSpeed(patrolSpeed);
 
-        if (movement.NearDestination(1.5f))
+        if (!hasGoal || movement.NearDestination(1.5f))
         {
-            movement.SetRandomGoalNear(blackboard.LastKnownPosition, wanderRadius);
-            blackboard.CurrentGoal = blackboard.LastKnownPosition;
+            if (movement.SetRandomGoalNear(blackboard.LastKnownPosition, wanderRadius))
+            {
+                blackboard.CurrentGoal = movement.CurrentDestination;
+                hasGoal = true;
+            }
+            else
+            {
+                return BTStatus.Failure;
+            }
+        }
+
+        if (!movement.HasValidPath && !movement.NearDestination(2f))
+        {
+            hasGoal = false;
         }
 
         return BTStatus.Running;

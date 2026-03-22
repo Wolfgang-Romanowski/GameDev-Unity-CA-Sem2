@@ -2,12 +2,7 @@ using UnityEngine;
 
 public class GoalZone : MonoBehaviour
 {
-    private GameUI gameUI;
-
-    void Awake()
-    {
-        gameUI = GetComponent<GameUI>();
-    }
+    [SerializeField] private GameUI gameUI;
 
     void OnTriggerEnter(Collider other)
     {

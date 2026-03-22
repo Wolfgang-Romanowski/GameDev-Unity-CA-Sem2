@@ -9,6 +9,9 @@ public class LeafChase : BTNode
     private float loseSightDelay;
     private float loseSightDeadline = -1f;
 
+    private Vector3 lockedGoal;
+    private bool goalLocked = false;
+
     public LeafChase(GuardAI guardAI, GuardMovement movement,
                      Blackboard blackboard, float chaseSpeed,
                      float loseSightDelay) : base("Chase")
@@ -22,29 +25,50 @@ public class LeafChase : BTNode
 
     public override BTStatus Tick()
     {
+        blackboard.IsSearching = false;
         blackboard.ActiveBTNode = "Chase";
         guardAI.SetState(GuardState.Chase);
         movement.SetSpeed(chaseSpeed);
 
         if (blackboard.CanSeePlayer && blackboard.TargetTransform != null)
         {
-            // actively seeing player — reset deadline and keep chasing
             loseSightDeadline = -1f;
-            movement.SetGoalIfFarEnough(blackboard.TargetTransform.position);
+            goalLocked = false;
+            movement.SetGoalIfFarEnough(blackboard.TargetTransform.position, 2f);
             blackboard.CurrentGoal = blackboard.TargetTransform.position;
+            return BTStatus.Running;
+        }
+
+        if (!goalLocked)
+        {
+            lockedGoal = blackboard.LastKnownPosition;
+            goalLocked = true;
+            movement.SetGoal(lockedGoal);
+            blackboard.CurrentGoal = lockedGoal;
+        }
+
+        if (movement.NearDestination(2f))
+        {
+            loseSightDeadline = -1f;
+            goalLocked = false;
+            blackboard.IsSearching = true;
+            return BTStatus.Failure;
+        }
+
+        if (blackboard.PlayerInHearingRange)
+        {
+            loseSightDeadline = -1f;
         }
         else
         {
-            // start deadline if not already counting
             if (loseSightDeadline < 0f)
                 loseSightDeadline = Time.time + loseSightDelay;
-
-            movement.SetGoalIfFarEnough(blackboard.LastKnownPosition, 1f);
-            blackboard.CurrentGoal = blackboard.LastKnownPosition;
 
             if (Time.time >= loseSightDeadline)
             {
                 loseSightDeadline = -1f;
+                goalLocked = false;
+                blackboard.IsSearching = true;
                 return BTStatus.Failure;
             }
         }

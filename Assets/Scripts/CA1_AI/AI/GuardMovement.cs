@@ -11,7 +11,7 @@ public class GuardMovement : MonoBehaviour
     public bool NearDestination(float dist) => agent.remainingDistance < dist && !agent.pathPending;
     public bool IsStuck { get; private set; }
     //pathpartial means reached closest reachable point, path invalid means no path exists
-    public bool HasValidPath => agent.hasPath && agent.pathStatus == NavMeshPathStatus.PathComplete;
+    public bool HasValidPath => agent.pathPending || (agent.hasPath && agent.pathStatus == NavMeshPathStatus.PathComplete);
 
     private NavMeshAgent agent;
     private float stuckTimer;
@@ -19,6 +19,9 @@ public class GuardMovement : MonoBehaviour
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        agent.acceleration = 40f;
+        agent.angularSpeed = 360f;
+        agent.autoBraking = false;
     }
     
 
@@ -29,14 +32,26 @@ public class GuardMovement : MonoBehaviour
 
     public void SetGoal(Vector3 position)
     {
+        if (agent.pathPending) return;
         agent.SetDestination(position);
     }
 
     //only repaths if the new goal is far enough from the current one
     public void SetGoalIfFarEnough(Vector3 position, float minDelta = 2f)
     {
+        if (agent.pathPending) return;
+
         if (Vector3.Distance(agent.destination, position) > minDelta)
             agent.SetDestination(position);
+    }
+
+    // forces an immediate repath to the current destination
+    // bypasses pathPending — used when the navmesh changes (e.g. door opens)
+    public void ForceRepath()
+    {
+        Vector3 dest = agent.destination;
+        agent.ResetPath();
+        agent.SetDestination(dest);
     }
 
     public void SetSpeed(float speed)
@@ -54,6 +69,8 @@ public class GuardMovement : MonoBehaviour
     //tries a random navmesh point near the given position
     public bool SetRandomGoalNear(Vector3 center, float radius)
     {
+        if (agent.pathPending) return true;
+
         Vector3 randomPoint = center + Random.insideUnitSphere * radius;
         randomPoint.y = center.y;
         if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, radius, NavMesh.AllAreas))

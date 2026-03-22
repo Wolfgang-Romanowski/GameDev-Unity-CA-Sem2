@@ -39,6 +39,7 @@ public class LeafInvestigate : BTNode
         if (movement.NearDestination(1f))
         {
             goalSet = false;
+            blackboard.SuspicionLevel = 0.15f;
             return BTStatus.Success;
         }
 

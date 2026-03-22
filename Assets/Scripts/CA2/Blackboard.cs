@@ -9,15 +9,5 @@ public class Blackboard : MonoBehaviour
     public Vector3 LastKnownPosition { get; set; }
     public Vector3 CurrentGoal { get; set; }
     public string ActiveBTNode { get; set; } = "None";
-}
-
-public static class BlackboardKeys
-{
-    public const string CanSeePlayer         = "CanSeePlayer";
-    public const string PlayerInHearingRange = "PlayerInHearingRange";
-    public const string SuspicionLevel       = "SuspicionLevel";
-    public const string TargetTransform      = "TargetTransform";
-    public const string LastKnownPosition    = "LastKnownPosition";
-    public const string CurrentGoal          = "CurrentGoal";
-    public const string ActiveBTNode         = "ActiveBTNode";
+    public bool IsSearching { get; set; }
 }

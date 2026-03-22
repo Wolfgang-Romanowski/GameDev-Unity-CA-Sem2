@@ -5,7 +5,8 @@ public class CooldownDecorator : BTNode
 {
     private BTNode child;
     private float cooldownTime;
-    private float lastSuccessTime = -999f;
+    private float lastEndTime = -999f;
+    private bool wasRunning = false;
 
     public CooldownDecorator(string name, BTNode child, float cooldownTime) : base(name)
     {
@@ -15,13 +16,15 @@ public class CooldownDecorator : BTNode
 
     public override BTStatus Tick()
     {
-        if (Time.time - lastSuccessTime < cooldownTime)
+        if (Time.time - lastEndTime < cooldownTime)
             return BTStatus.Failure;
 
         BTStatus status = child.Tick();
-        if (status == BTStatus.Success)
-            lastSuccessTime = Time.time;
 
+        if (wasRunning && status != BTStatus.Running)
+            lastEndTime = Time.time;
+
+        wasRunning = status == BTStatus.Running;
         return status;
     }
 }
