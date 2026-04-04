@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 5881311187277426336}
   - component: {fileID: 8340886897018585847}
   - component: {fileID: -2634515779809441563}
+  - component: {fileID: -7345913335292231768}
   m_Layer: 0
   m_Name: PlayerCharacter
   m_TagString: Player
@@ -136,6 +137,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 8340886897018585847}
   - {fileID: -2634515779809441563}
+  - {fileID: -7345913335292231768}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &8340886897018585847
 MonoBehaviour:
@@ -167,3 +169,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   moveSpeed: 6
+--- !u!114 &-7345913335292231768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4973372698976825231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7024ced845a7efb458b2919d23796810, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerScore
+  _Score: 0
