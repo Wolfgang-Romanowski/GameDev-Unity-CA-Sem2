@@ -30,3 +30,5 @@ The idea is to sneak past the guard and reach the goal zone at the end without g
 
 * Abandoned Factory (Lite) by Tirgames Assets for the environment and props
 * Starter Assets - ThirdPerson by Unity Technologies for the third person character controller
+* Photon Fusion 2 SDK (v2.0.12) — Photon Engine, https://www.photonengine.com/fusion — Free tier
+* TextMeshPro — Unity Technologies (included via Unity Package Manager)
