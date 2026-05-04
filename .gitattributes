@@ -1,0 +1,59 @@
+* text=auto eol=lf
+
+# Unity scripts and shaders
+*.cs text diff=csharp
+*.shader text
+*.cginc text
+*.hlsl text
+*.compute text
+*.uss text
+*.uxml text
+
+# Unity YAML assets - LF only
+*.meta text eol=lf
+*.unity text eol=lf
+*.prefab text eol=lf
+*.mat text eol=lf
+*.asset text eol=lf
+*.controller text eol=lf
+*.anim text eol=lf
+*.physicMaterial text eol=lf
+*.physicsMaterial2D text eol=lf
+*.guiskin text eol=lf
+*.fontsettings text eol=lf
+*.flare text eol=lf
+*.giparams text eol=lf
+*.spriteatlas text eol=lf
+
+# Project / package configs
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.asmdef text eol=lf
+*.asmref text eol=lf
+
+# Binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.a binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.psd binary
+*.tga binary
+*.tif binary
+*.tiff binary
+*.bmp binary
+*.ico binary
+*.fbx binary
+*.obj binary
+*.blend binary
+*.wav binary
+*.mp3 binary
+*.ogg binary
+*.ttf binary
+*.otf binary
+*.unitypackage binary
+*.pdb binary

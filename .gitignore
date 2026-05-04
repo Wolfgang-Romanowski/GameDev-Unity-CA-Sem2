@@ -10,3 +10,5 @@
 *.slnx
 .DS_Store
 Assets/TerrainDemoScene_URP/
+
+[Oo]bj/
