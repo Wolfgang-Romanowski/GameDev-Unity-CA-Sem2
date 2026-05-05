@@ -3,7 +3,7 @@ using UnityEngine;
 public class GuardCatch : MonoBehaviour
 {
     [SerializeField] private GameUI gameUI;
-    [SerializeField] private float catchDistance = 1.5f;
+    [SerializeField] private float catchDistance = 2.0f;
 
     private Transform player;
 
@@ -15,9 +15,17 @@ public class GuardCatch : MonoBehaviour
 
     void Update()
     {
-        if (gameUI.IsGameOver || player == null) return;
+        if (gameUI == null || gameUI.IsGameOver || player == null) return;
 
         if (Vector3.Distance(transform.position, player.position) < catchDistance)
+            gameUI.ShowLose();
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (gameUI == null || gameUI.IsGameOver) return;
+
+        if (other.CompareTag("Player"))
             gameUI.ShowLose();
     }
 }

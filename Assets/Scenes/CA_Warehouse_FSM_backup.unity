@@ -910,7 +910,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.016666668
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: a50706efda0c05e4ba2f413944f3c9c2, type: 2}
+  m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0
 --- !u!1 &222472637
 GameObject:
@@ -1106,11 +1106,11 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 1
-  m_Extents: {x: 0.5, y: 0.55, z: 0.5}
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
   m_CarveOnlyStationary: 1
-  m_Center: {x: -0.4, y: -0.1, z: 5}
+  m_Center: {x: -0.5, y: 0, z: 5}
   m_TimeToStationary: 0.5
 --- !u!1 &288303367 stripped
 GameObject:
@@ -3225,7 +3225,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.016666668
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 3fcba774413747a48b915a197e1d1ffc, type: 2}
+  m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0
 --- !u!1 &833147587 stripped
 GameObject:
@@ -3723,7 +3723,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.016666668
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 4705a4ea7f6754b4f8bc83f4929928b6, type: 2}
+  m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0
 --- !u!1 &901618191
 GameObject:
@@ -4240,8 +4240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a77ac4bcb8a5c4f8e6375b16c04478, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  guard: {fileID: 2022599855}
-  blackboard: {fileID: 2022599856}
+  guard: {fileID: 2022599847}
   debugText: {fileID: 651832885}
   overlayRoot: {fileID: 1428016325}
 --- !u!4 &1165166534
@@ -6910,7 +6909,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f090b756891137341996b03e20e94b8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoalZone
-  gameUI: {fileID: 0}
 --- !u!1001 &1900213512
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7299,15 +7297,12 @@ GameObject:
   - component: {fileID: 2022599845}
   - component: {fileID: 2022599844}
   - component: {fileID: 2022599843}
+  - component: {fileID: 2022599847}
   - component: {fileID: 2022599848}
   - component: {fileID: 2022599849}
   - component: {fileID: 2022599851}
   - component: {fileID: 2022599850}
   - component: {fileID: 2022599852}
-  - component: {fileID: 2022599856}
-  - component: {fileID: 2022599855}
-  - component: {fileID: 2022599854}
-  - component: {fileID: 2022599853}
   m_Layer: 0
   m_Name: Guard
   m_TagString: Untagged
@@ -7411,6 +7406,26 @@ Transform:
   - {fileID: 2114247723}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2022599847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2022599842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f029a7a42ae65ee47a53bf83de303c12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GuardAI
+  waypoints:
+  - {fileID: 1789409007}
+  - {fileID: 2015416399}
+  patrolSpeed: 2
+  chaseSpeed: 5
+  investigateTimeout: 4
+  searchTimeout: 6
+  loseSightDelay: 1.5
 --- !u!195 &2022599848
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -7556,9 +7571,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GuardSensor
   sightRange: 15
-  sightAngle: 54.8
-  hearingRange: 7
-  blackboard: {fileID: 2022599856}
+  sightAngle: 55
+  hearingRange: 5
 --- !u!114 &2022599851
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7587,73 +7601,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GuardCatch
   gameUI: {fileID: 1892907723}
   catchDistance: 1.5
---- !u!114 &2022599853
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2022599842}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c21061aa40fc4d489d716895454bf6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SuspicionSystem
-  blackboard: {fileID: 2022599856}
-  sightAccumulateRate: 0.8
-  hearingAccumulateRate: 0.4
-  decayRate: 0.3
-  investigateThreshold: 0.3
-  chaseThreshold: 0.8
---- !u!114 &2022599854
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2022599842}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aee6f823f09e0c741b19d13a6c17d45f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GuardBT
-  blackboard: {fileID: 2022599856}
-  guardAI: {fileID: 2022599855}
-  movement: {fileID: 2022599851}
-  suspicion: {fileID: 2022599853}
-  waypoints:
-  - {fileID: 1789409007}
-  - {fileID: 2015416399}
-  patrolSpeed: 2
-  chaseSpeed: 5
-  loseSightDelay: 1.5
-  searchTimeout: 10
-  btTickRate: 0.1
-  investigateCooldown: 5
---- !u!114 &2022599855
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2022599842}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9308028d445ed8a4484b74759087228f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GuardAI
---- !u!114 &2022599856
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2022599842}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 379682def90c7474fa3496ceae964d77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Blackboard
 --- !u!1 &2029965853
 GameObject:
   m_ObjectHideFlags: 0
@@ -7804,8 +7751,8 @@ BoxCollider:
   m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 2.416552}
-  m_Center: {x: 8.918954e-11, y: 0, z: -0.7082759}
+  m_Size: {x: 0.99999994, y: 0.99999994, z: 1}
+  m_Center: {x: -0.00000023841858, y: 0, z: -0.0000076293945}
 --- !u!1 &2042398847
 GameObject:
   m_ObjectHideFlags: 0
