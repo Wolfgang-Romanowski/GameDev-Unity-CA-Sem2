@@ -1665,6 +1665,50 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0.508, z: 0}
   m_TimeToStationary: 0.5
+--- !u!1 &431551814
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 431551815}
+  - component: {fileID: 431551816}
+  m_Layer: 0
+  m_Name: AuthBootstrap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &431551815
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 431551814}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.02828, y: -0, z: 18.75702}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &431551816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 431551814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e7c16afb838e074fbde935abc5baccb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CA3.Networking.AuthBootstrap
 --- !u!1001 &445586373
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6910,7 +6954,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f090b756891137341996b03e20e94b8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoalZone
-  gameUI: {fileID: 0}
 --- !u!1001 &1900213512
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8246,3 +8289,4 @@ SceneRoots:
   - {fileID: 1428016326}
   - {fileID: 1651505976}
   - {fileID: 1165166534}
+  - {fileID: 431551815}
