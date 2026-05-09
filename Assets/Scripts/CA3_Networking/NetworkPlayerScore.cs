@@ -22,6 +22,13 @@ namespace CA3.Networking
                 scoreLabel.text = "Pickups: " + Score;
         }
 
+        //called via RPC from NetworkPickup. Routed to the StateAuthority which legally write to the [Networked] Score property.
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void RPC_AwardScore()
+        {
+            Score += 1;
+        }
+
         private void CreateScoreUI()
         {
             var canvas = new GameObject("ScoreCanvas").AddComponent<Canvas>();

@@ -36,13 +36,22 @@ namespace CA3.Networking
             if (score == null) return;
             if (!score.HasInputAuthority) return;
 
-            if (!Object.HasStateAuthority)
-                Object.RequestStateAuthority();
+            RPC_RequestPickup(score.Object.InputAuthority);
+        }
 
-            if (!Object.HasStateAuthority) return;
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        private void RPC_RequestPickup(PlayerRef collector)
+        {
+            if (IsCollected) return;
 
-            IsCollected   = true;
-            score.Score  += 1;
+            var playerObj = Runner.GetPlayerObject(collector);
+            if (playerObj == null) return;
+
+            var score = playerObj.GetComponent<NetworkPlayerScore>();
+            if (score == null) return;
+
+            IsCollected = true;
+            score.RPC_AwardScore();
         }
     }
 }
