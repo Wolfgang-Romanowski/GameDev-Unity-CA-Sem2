@@ -36,14 +36,13 @@ namespace CA3.Networking
             if (score == null) return;
             if (!score.HasInputAuthority) return;
 
-            //shared mode colliding player asks for state authority and writes [Networked] flag increments score
             if (!Object.HasStateAuthority)
                 Object.RequestStateAuthority();
 
             if (!Object.HasStateAuthority) return;
 
-            IsCollected = true;
-            score.Score += 1;
+            IsCollected   = true;
+            score.Score  += 1;
         }
     }
 }
