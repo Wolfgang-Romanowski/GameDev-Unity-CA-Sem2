@@ -99,6 +99,7 @@ namespace CA3.Networking
             if (playerPrefab == default)      return;
 
             var obj = runner.Spawn(playerPrefab, GetSpawnPosition(player), Quaternion.identity, inputAuthority: player);
+            runner.SetPlayerObject(player, obj);
             spawnedPlayers[player] = obj;
             Debug.Log("[Net] Spawned local player");
         }
