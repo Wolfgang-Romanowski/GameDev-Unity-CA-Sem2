@@ -23,8 +23,13 @@ namespace CA3.Networking
         [SerializeField] private float catchCooldown = 2f;
         [SerializeField] private float stunDuration = 5f;
 
+        [Header("Performance")]
+        [SerializeField] private int perceptionTickInterval = 4;
+
         [Networked] public int        CurrentWaypointIndex { get; set; }
         [Networked] public GuardState State                { get; set; }
+
+        private int perceptionTickCounter = 0;
 
         private NavMeshAgent agent;
         private NetworkObject currentTarget;
@@ -51,7 +56,23 @@ namespace CA3.Networking
             if (!HasStateAuthority) return;
             if (agent == null || !agent.isOnNavMesh) return;
 
-            NetworkObject closestPlayer = FindClosestPlayerInRange();
+            if (NetworkGameManager.Instance != null && NetworkGameManager.Instance.GameOver)
+                {
+                    if (agent.hasPath) agent.ResetPath();
+                    return;
+                }
+                
+            NetworkObject closestPlayer = null;
+            perceptionTickCounter++;
+            if (perceptionTickCounter >= perceptionTickInterval)
+            {
+                perceptionTickCounter = 0;
+                closestPlayer = FindClosestPlayerInRange();
+            }
+            else if (State == GuardState.Chase && currentTarget != null)
+            {
+                closestPlayer = currentTarget;
+            }
 
             if (closestPlayer != null)
             {

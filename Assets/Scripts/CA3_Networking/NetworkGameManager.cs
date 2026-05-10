@@ -6,6 +6,7 @@ namespace CA3.Networking
 {
     public class NetworkGameManager : NetworkBehaviour
     {
+        public static NetworkGameManager Instance { get; private set; }
         [SerializeField] private int targetScore = 3;
 
         [Networked] public int    WinnerPlayerId { get; set; } = -1;
@@ -15,6 +16,7 @@ namespace CA3.Networking
 
         public override void Spawned()
         {
+            Instance = this;
             CreateWinnerUI();
         }
 

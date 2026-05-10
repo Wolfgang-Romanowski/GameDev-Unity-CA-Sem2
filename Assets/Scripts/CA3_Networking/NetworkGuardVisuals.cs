@@ -36,14 +36,17 @@ namespace CA3.Networking
 
         public override void Render()
         {
-            if (instanceMaterial == null || guard == null) return;
+    if (instanceMaterial == null || guard == null) return;
 
-            bool chasing = guard.State == NetworkGuard.GuardState.Chase;
-            Color targetEmission = chasing ? chaseEmission : patrolEmission;
-            float speed = chasing ? rampInSpeed : rampOutSpeed;
+    bool gameOver = NetworkGameManager.Instance != null && NetworkGameManager.Instance.GameOver;
+    if (gameOver) return;
 
-            currentEmission = Color.Lerp(currentEmission, targetEmission, Time.deltaTime * speed);
-            instanceMaterial.SetColor("_EmissionColor", currentEmission);
+    bool chasing = guard.State == NetworkGuard.GuardState.Chase;
+    Color targetEmission = chasing ? chaseEmission : patrolEmission;
+    float speed = chasing ? rampInSpeed : rampOutSpeed;
+
+    currentEmission = Color.Lerp(currentEmission, targetEmission, Time.deltaTime * speed);
+    instanceMaterial.SetColor("_EmissionColor", currentEmission);
         }
     }
 }

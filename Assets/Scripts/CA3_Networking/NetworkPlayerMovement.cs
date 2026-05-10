@@ -17,6 +17,7 @@ namespace CA3.Networking
         public override void FixedUpdateNetwork()
         {
             if (!HasStateAuthority) return;
+            if (NetworkGameManager.Instance != null && NetworkGameManager.Instance.GameOver) return;
             var stun = GetComponent<NetworkPlayerStun>();
             if (stun != null && stun.IsStunned) return;
             if (GetInput(out NetworkInputData input))
