@@ -337,7 +337,7 @@ Transform:
   m_GameObject: {fileID: 86877026}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.8234, y: 0, z: 1.9875698}
+  m_LocalPosition: {x: -6.8234, y: 0, z: 1.7}
   m_LocalScale: {x: 25.520742, y: 1.7347268, z: 0.2747}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1147,7 +1147,7 @@ Transform:
   m_GameObject: {fileID: 951377956}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.3, y: 1, z: -2.14}
+  m_LocalPosition: {x: -1.3, y: 1, z: -3.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1561,7 +1561,7 @@ Transform:
   m_GameObject: {fileID: 1082921042}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.70541996, z: -0, w: 0.7087896}
-  m_LocalPosition: {x: -18.3634, y: 0, z: -4.21243}
+  m_LocalPosition: {x: -18.27, y: 0, z: -4.21243}
   m_LocalScale: {x: 12.335009, y: 1.7347268, z: 0.2747}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2055,7 +2055,7 @@ Transform:
   m_GameObject: {fileID: 1549327327}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.70541996, z: -0, w: 0.7087896}
-  m_LocalPosition: {x: 5.9565997, y: 0, z: -4.21243}
+  m_LocalPosition: {x: 5.68, y: 0, z: -4.21243}
   m_LocalScale: {x: 12.335009, y: 1.7347268, z: 0.2747}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2069,9 +2069,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 311071208152645376, guid: 64dd53865c662954abc2c4ee5173d35a, type: 3}
+      propertyPath: m_Interpolate
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2622149318311829519, guid: 64dd53865c662954abc2c4ee5173d35a, type: 3}
       propertyPath: SortKey
       value: 2120507948
+      objectReference: {fileID: 0}
+    - target: {fileID: 3689219609013658599, guid: 64dd53865c662954abc2c4ee5173d35a, type: 3}
+      propertyPath: chaseSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3689219609013658599, guid: 64dd53865c662954abc2c4ee5173d35a, type: 3}
+      propertyPath: patrolSpeed
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3689219609013658599, guid: 64dd53865c662954abc2c4ee5173d35a, type: 3}
       propertyPath: 'waypoints.Array.data[0]'
@@ -2136,6 +2148,10 @@ PrefabInstance:
     - target: {fileID: 6626840405967623436, guid: 64dd53865c662954abc2c4ee5173d35a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8171291898631962685, guid: 64dd53865c662954abc2c4ee5173d35a, type: 3}
+      propertyPath: DisableSharedModeInterpolation
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 406226574476104049}
   - component: {fileID: 1887119025433440922}
   - component: {fileID: -7664560746851572909}
+  - component: {fileID: 6320315365939337607}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: Untagged
@@ -141,6 +142,7 @@ MonoBehaviour:
   - {fileID: 8249284240290493711}
   - {fileID: 406226574476104049}
   - {fileID: 1887119025433440922}
+  - {fileID: 6320315365939337607}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &1502235358314999497
 MonoBehaviour:
@@ -172,6 +174,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CA3.Networking.NetworkPlayerMovement
   moveSpeed: 6
+  wallCheckDistance: 0.6
+  wallLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &406226574476104049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,3 +231,16 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &6320315365939337607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7831420676066962589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7d258f31a7e69f44961d4289cec037a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CA3.Networking.NetworkPlayerStun
+  _StunUntilTime: 0

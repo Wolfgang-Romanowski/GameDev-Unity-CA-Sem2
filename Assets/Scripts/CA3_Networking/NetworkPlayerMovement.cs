@@ -17,7 +17,8 @@ namespace CA3.Networking
         public override void FixedUpdateNetwork()
         {
             if (!HasStateAuthority) return;
-
+            var stun = GetComponent<NetworkPlayerStun>();
+            if (stun != null && stun.IsStunned) return;
             if (GetInput(out NetworkInputData input))
             {
                 Vector3 step = input.direction.normalized * moveSpeed * Runner.DeltaTime;
