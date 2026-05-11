@@ -30,7 +30,8 @@ public class LeafChase : BTNode
         guardAI.SetState(GuardState.Chase);
         movement.SetSpeed(chaseSpeed);
 
-        if (blackboard.CanSeePlayer && blackboard.TargetTransform != null)
+        //confidence > 0.3 means we've had 0.2s of clean LOS brief occlusions don't snapbreak chase
+        if (blackboard.SightConfidence > 0.3f && blackboard.TargetTransform != null)
         {
             loseSightDeadline = -1f;
             goalLocked = false;

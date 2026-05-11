@@ -6,7 +6,6 @@ public class CooldownDecorator : BTNode
     private BTNode child;
     private float cooldownTime;
     private float lastEndTime = -999f;
-    private bool wasRunning = false;
 
     public CooldownDecorator(string name, BTNode child, float cooldownTime) : base(name)
     {
@@ -21,10 +20,9 @@ public class CooldownDecorator : BTNode
 
         BTStatus status = child.Tick();
 
-        if (wasRunning && status != BTStatus.Running)
+        if (status != BTStatus.Running)
             lastEndTime = Time.time;
 
-        wasRunning = status == BTStatus.Running;
         return status;
     }
 }

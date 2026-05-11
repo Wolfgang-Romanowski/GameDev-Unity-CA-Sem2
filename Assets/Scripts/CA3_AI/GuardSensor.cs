@@ -6,11 +6,18 @@ public class GuardSensor : MonoBehaviour
     [SerializeField] private float sightAngle = 55f;
     [SerializeField] private float hearingRange = 5f;
     [SerializeField] private Blackboard blackboard;
+
+    [Header("Sight Confidence")]
+    [Tooltip("How quickly confidence rises while LOS holds (per second).")]
+    [SerializeField] private float sightConfidenceRiseRate = 1.5f;
+    [Tooltip("How quickly confidence decays when LOS breaks (per second).")]
+    [SerializeField] private float sightConfidenceDecayRate = 1.0f;
     
     public bool CanSeePlayer { get; private set; }
     public bool PlayerInHearingRange { get; private set; }
     public Transform Player { get; private set; }
 
+    private float sightConfidence = 0f;
     private float playerSearchTimer = 0f;
 
     void Awake()
@@ -50,10 +57,17 @@ public class GuardSensor : MonoBehaviour
             }
         }
 
+        //smooth binary LOS into a 0-1 confidence value so brief occlusions don't snap-break chase
+        if (CanSeePlayer)
+            sightConfidence = Mathf.Min(1f, sightConfidence + sightConfidenceRiseRate * Time.deltaTime);
+        else
+            sightConfidence = Mathf.Max(0f, sightConfidence - sightConfidenceDecayRate * Time.deltaTime);
+
         if (blackboard != null)
         {
             blackboard.CanSeePlayer = CanSeePlayer;
             blackboard.PlayerInHearingRange = PlayerInHearingRange;
+            blackboard.SightConfidence = sightConfidence;
 
             if (CanSeePlayer || PlayerInHearingRange)
                 blackboard.TargetTransform = Player;
@@ -69,6 +83,7 @@ public class GuardSensor : MonoBehaviour
     {
         blackboard.CanSeePlayer = false;
         blackboard.PlayerInHearingRange = false;
+        blackboard.SightConfidence = 0f;
     }
 
     playerSearchTimer -= Time.deltaTime;

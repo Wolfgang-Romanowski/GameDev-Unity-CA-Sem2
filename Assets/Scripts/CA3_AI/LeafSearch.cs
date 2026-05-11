@@ -22,10 +22,14 @@ public class LeafSearch : BTNode
 
     public override BTStatus Tick()
     {
+        bool isFreshEntry = !blackboard.IsSearching;
+
         blackboard.ActiveBTNode = "Search";
-        blackboard.IsSearching = true;
+        blackboard.IsSearching  = true;
         guardAI.SetState(GuardState.Search);
         movement.SetSpeed(patrolSpeed);
+
+        if (isFreshEntry) hasGoal = false;
 
         if (!hasGoal || movement.NearDestination(1.5f))
         {

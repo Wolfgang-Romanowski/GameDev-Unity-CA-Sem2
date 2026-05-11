@@ -44,7 +44,10 @@ public class DebugOverlay : MonoBehaviour
             $"Target <b>{tgt}</b>\n" +
             $"{div}\n" +
             $"{see} See {hear} Hear {srch} Srch\n" +
+            $"<size=85%><color=#888>Suspicion</color></size>\n" +
             $"{SuspicionBar(blackboard.SuspicionLevel)} {blackboard.SuspicionLevel:P0}\n" +
+            $"<size=85%><color=#888>Sight Confidence</color></size>\n" +
+            $"{ConfidenceBar(blackboard.SightConfidence)} {blackboard.SightConfidence:P0}\n" +
             $"{div}\n" +
             $"Goal  <b>({d.x:F1}, {d.z:F1})</b>\n" +
             $"LKP   <b>({lk.x:F1}, {lk.z:F1})</b>\n" +
@@ -56,6 +59,15 @@ public class DebugOverlay : MonoBehaviour
         int total = 10;
         int filled = Mathf.RoundToInt(value * total);
         string c = value < 0.3f ? "#4CAF50" : value < 0.8f ? "#FFC107" : "#F44336";
+        return "<color=" + c + ">" + new string('\u2588', filled) + "</color>"
+             + "<color=#333>" + new string('\u2588', total - filled) + "</color>";
+    }
+
+    string ConfidenceBar(float value)
+    {
+        int total = 10;
+        int filled = Mathf.RoundToInt(value * total);
+        string c = value < 0.3f ? "#3F51B5" : value < 0.7f ? "#00BCD4" : "#E3F2FD";
         return "<color=" + c + ">" + new string('\u2588', filled) + "</color>"
              + "<color=#333>" + new string('\u2588', total - filled) + "</color>";
     }
