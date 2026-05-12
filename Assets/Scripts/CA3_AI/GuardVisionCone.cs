@@ -10,6 +10,18 @@ public class GuardVisionCone : MonoBehaviour
     [Tooltip("Higher = smoother cone but more raycasts. 80 rays × 3 heights = 240 casts/frame. Acceptable for single guard; would need LOD culling at scale.")]
     [SerializeField] private int rayCount = 80;
 
+    [Tooltip("Small lift above the detected floor so the cone doesn't z-fight with the ground.")]
+    [SerializeField] private float coneFloorOffset = 0.05f;
+    [Tooltip("Layers treated as floor when locating the guard's feet via downward raycast.")]
+    [SerializeField] private LayerMask floorMask = ~0;
+
+    [Header("Hearing Visualisation")]
+    [Tooltip("Drawn as a translucent disc around the guard so the player can read the hearing range.")]
+    [SerializeField] private float hearingRange = 5f;
+    [Tooltip("Set to false to hide the hearing ring entirely.")]
+    [SerializeField] private bool showHearingRing = true;
+    [SerializeField] private Color hearingRingColor = new Color(1f, 1f, 0f, 0.08f);
+
     [SerializeField] private Color patrolColor = new Color(0f, 1f, 0f, 0.2f);
     [SerializeField] private Color investigateColor = new Color(1f, 1f, 0f, 0.25f);
     [SerializeField] private Color chaseColor = new Color(1f, 0f, 0f, 0.35f);
@@ -17,10 +29,15 @@ public class GuardVisionCone : MonoBehaviour
     [SerializeField] private Color detectColor = new Color(1f, 0f, 0f, 0.5f);
 
     private const int HeightSteps = 3;
+    private const int HearingRingSegments = 48;
 
     private Mesh mesh;
     private Material coneMaterial;
     private GuardAI guardAI;
+
+    private GameObject hearingRingObj;
+    private Mesh hearingRingMesh;
+    private Material hearingRingMaterial;
 
     void Start()
     {
@@ -35,6 +52,56 @@ public class GuardVisionCone : MonoBehaviour
         meshRenderer.receiveShadows = false;
 
         guardAI = GetComponentInParent<GuardAI>();
+
+        if (showHearingRing)
+            CreateHearingRing();
+    }
+
+    void CreateHearingRing()
+    {
+        hearingRingObj = new GameObject("HearingRing");
+        hearingRingObj.transform.SetParent(transform.parent, false);
+        hearingRingObj.transform.localPosition = Vector3.up * 0.05f;
+
+        var mf = hearingRingObj.AddComponent<MeshFilter>();
+        var mr = hearingRingObj.AddComponent<MeshRenderer>();
+
+        hearingRingMesh = new Mesh();
+        mf.mesh = hearingRingMesh;
+
+        hearingRingMaterial = new Material(Shader.Find("Sprites/Default"));
+        hearingRingMaterial.color = hearingRingColor;
+        mr.material = hearingRingMaterial;
+        mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        mr.receiveShadows = false;
+
+        BuildHearingRingMesh();
+    }
+
+    void BuildHearingRingMesh()
+    {
+        Vector3[] vertices = new Vector3[HearingRingSegments + 1];
+        int[] triangles = new int[HearingRingSegments * 3];
+        vertices[0] = Vector3.zero;
+
+        float angleStep = 360f / HearingRingSegments;
+        for (int i = 0; i < HearingRingSegments; i++)
+        {
+            float angle = angleStep * i * Mathf.Deg2Rad;
+            vertices[i + 1] = new Vector3(Mathf.Sin(angle), 0f, Mathf.Cos(angle)) * hearingRange;
+        }
+
+        for (int i = 0; i < HearingRingSegments; i++)
+        {
+            triangles[i * 3]     = 0;
+            triangles[i * 3 + 1] = i + 1;
+            triangles[i * 3 + 2] = (i + 1) % HearingRingSegments + 1;
+        }
+
+        hearingRingMesh.Clear();
+        hearingRingMesh.vertices = vertices;
+        hearingRingMesh.triangles = triangles;
+        hearingRingMesh.RecalculateNormals();
     }
 
     void LateUpdate()
@@ -92,7 +159,21 @@ public class GuardVisionCone : MonoBehaviour
             mesh.vertices = vertices;
             mesh.triangles = triangles;
             mesh.RecalculateNormals();
+
+            float floorY = ResolveFloorY(guard.position);
+            transform.position = new Vector3(guard.position.x, floorY + coneFloorOffset, guard.position.z);
+
+            if (hearingRingObj != null)
+                hearingRingObj.transform.position = new Vector3(guard.position.x, floorY + coneFloorOffset, guard.position.z);
         }
+
+    float ResolveFloorY(Vector3 guardPos)
+    {
+        Vector3 origin = guardPos + Vector3.up * 2f;
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 10f, floorMask, QueryTriggerInteraction.Ignore))
+            return hit.point.y;
+        return guardPos.y;
+    }
 
         void UpdateColor()
     {
