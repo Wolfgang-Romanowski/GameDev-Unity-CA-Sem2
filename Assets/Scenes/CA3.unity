@@ -7558,6 +7558,10 @@ MonoBehaviour:
   sightAngle: 54.8
   hearingRange: 7
   blackboard: {fileID: 2022599856}
+  sightConfidenceRiseRate: 1.5
+  sightConfidenceDecayRate: 1
+  hearingSpeedThreshold: 1.5
+  chaseRangeForGizmo: 5
 --- !u!114 &2022599851
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8016,7 +8020,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GuardVisionCone
   viewDistance: 15
   viewAngle: 55
-  rayCount: 50
+  rayCount: 40
+  coneFloorOffset: 0.05
+  floorMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  hearingRange: 5
+  showHearingRing: 1
+  hearingRingColor: {r: 1, g: 1, b: 0, a: 0.08}
   patrolColor: {r: 0, g: 1, b: 0, a: 0.2}
   investigateColor: {r: 1, g: 1, b: 0, a: 0.25}
   chaseColor: {r: 1, g: 0, b: 0, a: 0.35}

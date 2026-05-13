@@ -119,7 +119,6 @@ public class GuardVisionCone : MonoBehaviour
         {
             float angleStep = (viewAngle * 2f) / rayCount;
 
-            //only reallocate when rayCount changes (e.g. Inspector tweak)
             if (coneVertices == null || lastRayCount != rayCount)
             {
                 coneVertices = new Vector3[rayCount + 2];

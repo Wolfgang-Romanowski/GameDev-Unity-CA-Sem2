@@ -15,6 +15,8 @@ public class GuardMovement : MonoBehaviour
 
     private NavMeshAgent agent;
     private float stuckTimer;
+    private bool isLookingAround;
+    private float lookAroundSpeed = 90f;
 
     void Awake()
     {
@@ -23,22 +25,41 @@ public class GuardMovement : MonoBehaviour
         agent.angularSpeed = 360f;
         agent.autoBraking = false;
     }
-    
+
 
     void Update()
     {
         UpdateStuckDetection();
+
+        if (isLookingAround)
+            transform.Rotate(0f, lookAroundSpeed * Time.deltaTime, 0f);
+    }
+
+    //pivots the guard in place — visually distinct from Search's wandering
+    public void StartLookAround()
+    {
+        if (isLookingAround) return;
+        isLookingAround = true;
+        agent.updateRotation = false;
+    }
+
+    public void StopLookAround()
+    {
+        if (!isLookingAround) return;
+        isLookingAround = false;
+        agent.updateRotation = true;
     }
 
     public void SetGoal(Vector3 position)
     {
-        if (agent.pathPending) return;
+        StopLookAround();
         agent.SetDestination(position);
     }
 
     //only repaths if the new goal is far enough from the current one
     public void SetGoalIfFarEnough(Vector3 position, float minDelta = 2f)
     {
+        StopLookAround();
         if (agent.pathPending) return;
 
         if (Vector3.Distance(agent.destination, position) > minDelta)
@@ -49,6 +70,7 @@ public class GuardMovement : MonoBehaviour
     // bypasses pathPending — used when the navmesh changes (e.g. door opens)
     public void ForceRepath()
     {
+        StopLookAround();
         Vector3 dest = agent.destination;
         agent.ResetPath();
         agent.SetDestination(dest);
@@ -61,6 +83,7 @@ public class GuardMovement : MonoBehaviour
 
     public void ClearPath()
     {
+        StopLookAround();
         agent.ResetPath();
         stuckTimer = 0f;
         IsStuck = false;
@@ -69,6 +92,7 @@ public class GuardMovement : MonoBehaviour
     //tries a random navmesh point near the given position
     public bool SetRandomGoalNear(Vector3 center, float radius)
     {
+        StopLookAround();
         if (agent.pathPending) return true;
 
         Vector3 randomPoint = center + Random.insideUnitSphere * radius;

@@ -55,16 +55,18 @@ public class GuardBT : MonoBehaviour
             new LeafSearch(guardAI, movement, blackboard, patrolSpeed),
             searchTimeout);
 
+        //chase: confidence > 0.7 (fast sight path) or suspicion ≥ 80% (slow buildup path)
         var chaseBranch = new ConditionalAbortDecorator("AbortIfNotAlert",
             leafChase,
-            () => blackboard.CanSeePlayer
+            () => blackboard.SightConfidence > 0.7f
                || (blackboard.SuspicionLevel >= suspicion.ChaseThreshold && !blackboard.IsSearching));
 
-        var investigateBranch = new CooldownDecorator("InvestigateCooldown",
-            new ConditionalAbortDecorator("AbortIfNotSuspicious",
+        //condition wraps cooldown so a below-threshold tick doesn't re-arm and starve Investigate
+        var investigateBranch = new ConditionalAbortDecorator("AbortIfNotSuspicious",
+            new CooldownDecorator("InvestigateCooldown",
                 new LeafInvestigate(guardAI, movement, blackboard, patrolSpeed),
-                () => !blackboard.IsSearching && blackboard.SuspicionLevel >= suspicion.InvestigateThreshold),
-            investigateCooldown);
+                investigateCooldown),
+            () => !blackboard.IsSearching && blackboard.SuspicionLevel >= suspicion.InvestigateThreshold);
 
         var searchBranch = new BTSequence("SearchBranch", new List<BTNode>
         {

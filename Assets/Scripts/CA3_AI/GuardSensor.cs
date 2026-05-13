@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class GuardSensor : MonoBehaviour
 {
@@ -86,7 +87,7 @@ public class GuardSensor : MonoBehaviour
             if (CanSeePlayer || PlayerInHearingRange)
                 blackboard.TargetTransform = Player;
             if (CanSeePlayer)
-                blackboard.LastKnownPosition = Player.position;
+                blackboard.LastKnownPosition = SnapToNavMesh(Player.position);
         }
     }
 
@@ -108,17 +109,22 @@ public class GuardSensor : MonoBehaviour
         playerSearchTimer = 1f;
     }}
 
+    //snap to navmesh so BT leaves get a reachable LKP — player.y may sit just off the mesh
+    Vector3 SnapToNavMesh(Vector3 position)
+    {
+        if (NavMesh.SamplePosition(position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+            return hit.position;
+        return position;
+    }
+
     void OnDrawGizmosSelected()
     {
-        //hearing range — yellow
         Gizmos.color = new Color(1f, 1f, 0f, 0.3f);
         Gizmos.DrawWireSphere(transform.position, hearingRange);
 
-        //chase commit range — red
         Gizmos.color = new Color(1f, 0f, 0f, 0.25f);
         Gizmos.DrawWireSphere(transform.position, chaseRangeForGizmo);
 
-        //sight cone edge rays — green
         Gizmos.color = new Color(0f, 1f, 0f, 0.4f);
         Vector3 forward = transform.forward * sightRange;
         Quaternion leftRot = Quaternion.AngleAxis(-sightAngle, Vector3.up);
