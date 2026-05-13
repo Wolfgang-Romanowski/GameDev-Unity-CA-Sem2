@@ -4,6 +4,7 @@ public class GuardSensor : MonoBehaviour
 {
     [SerializeField] private float sightRange = 15f;
     [SerializeField] private float sightAngle = 55f;
+    [Tooltip("NOTE: must match GuardVisionCone.hearingRange so the visualisation reflects gameplay.")]
     [SerializeField] private float hearingRange = 5f;
     [SerializeField] private Blackboard blackboard;
 
