@@ -25,7 +25,7 @@
 ## CA3 - AI for Games (Behaviour Tree Vertical Slice)
 
 **Branch:** `feature/ca3-ai`
-**Scene:** `Assets/Scenes/CA3.unity`
+**Scene:** `Assets/Scenes/02_VerticalSlice/CA3.unity` *(module-standard location per CA3 handout §6)*
 **Tag:** `ca3-submit-ai` *(applied at final submission)*
 
 ### Packages used
@@ -36,7 +36,7 @@
 
 ### How to run
 1. Open the project in Unity 6.3
-2. Load `Assets/Scenes/CA3.unity`
+2. Load `Assets/Scenes/02_VerticalSlice/CA3.unity`
 3. Press Play
 4. Press **F1** to toggle the debug overlay
 
