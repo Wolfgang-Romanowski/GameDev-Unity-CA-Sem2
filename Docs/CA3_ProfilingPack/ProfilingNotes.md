@@ -3,23 +3,23 @@
 ## Captures
 Located in `Docs/ProfilerCaptures/AI_Profiler/`:
 - `CA3_AI_Profile_Before.png` - baseline state, vision cone reallocating its mesh buffers each frame
-- `CA3_AI_Profile_After.png` - after cached-buffer fix, vision cone holds onto its arrays between frames
-- `CA3_AI_Profile_Fixed.png` - final state after subsequent hearing-gate tuning and BT tick-rate verification, used as the reference for the submission build
+- `CA3_AI_Profile_After.png` - intermediate state, allocation still present but smoothed
+- `CA3_AI_Profile_Fixed.png` - final state with the cached buffer pattern, zero allocation
 
 ## What was measured
-The Unity Profiler was run in Play Mode with the player active and the guard NPC running its full Patrol / Investigate / Chase / Search loop. The headline concern was `GuardVisionCone.DrawVisionCone()`, which fires in `LateUpdate` every frame and originally allocated two arrays inside the method body:
+The Unity Profiler was run in Play Mode with the player active and the guard NPC running its full Patrol / Investigate / Chase / Search loop. The headline concern was `GuardVisionCone.LateUpdate()` (which invokes `DrawVisionCone()`). In the unoptimised state the method body allocated two arrays every frame:
 
 ```csharp
-Vector3[] vertices  = new Vector3[rayCount + 2];
-int[]     triangles = new int[rayCount * 3];
+Vector3[] vertices  = new Vector3[rayCount + 2];   // 82 elements at rayCount=80
+int[]     triangles = new int[rayCount * 3];       // 240 elements at rayCount=80
 ```
 
-With `rayCount = 80` (configurable; rubric range is 10-80), that is 82 `Vector3` plus 240 `int` allocated 60+ times per second. The before capture shows this as a steady GC Allocated In Frame stripe with regular spikes whenever the generational collector runs to reclaim them. Beyond the GC pressure, the cone also fires 240 raycasts per frame (`rayCount * HeightSteps`); this cost is acknowledged in the script tooltip and is acceptable for a single guard but would need LOD culling at scale.
+With the BT ticking at 10 Hz via coroutine but the cone redrawing every `LateUpdate` at frame rate, this allocation pattern was the dominant per-frame GC contributor in the AI stack. The baseline capture shows a frame with `GuardVisionCone.LateUpdate` consuming **1.3 KB GC Alloc** per call and a visible **21.28 ms GC pause spike** in the CPU trace, pushing that frame to 23.34 ms total. Stable frames in the same baseline capture sit around the 16 ms (60 fps) line, so the spike is a single-collection event rather than continuous pressure - but the allocation is what feeds it.
 
-A secondary concern was the BT update path: ticking the whole tree on every `Update` would compound the cone cost. This was already gated by a coroutine running at `btTickRate = 0.1f` (10 Hz) and verified during profiling, so it did not need changing.
+The 240 raycasts per frame (`rayCount * HeightSteps`, where `HeightSteps = 3` so the cone clips correctly against walls of varying height) are a deliberate quality-cost trade-off and were left as is. The tooltip on `rayCount` explicitly acknowledges that LOD culling would be required at scale.
 
 ## What was changed
-**Primary fix** - `GuardVisionCone` was reworked to keep its mesh buffers as fields and only reallocate when `rayCount` actually changes (e.g. Inspector tweak). The relevant change in `DrawVisionCone`:
+`GuardVisionCone` was reworked to keep its mesh buffers as fields and reallocate only when `rayCount` actually changes (Inspector tweak):
 
 ```csharp
 if (coneVertices == null || lastRayCount != rayCount)
@@ -28,20 +28,35 @@ if (coneVertices == null || lastRayCount != rayCount)
     coneTriangles = new int[rayCount * 3];
     lastRayCount  = rayCount;
 }
+
+coneVertices[0] = Vector3.zero;
+// ... populate the cached arrays directly ...
+mesh.vertices  = coneVertices;
+mesh.triangles = coneTriangles;
 ```
 
-This removes the per-frame allocation entirely. The mesh is still rebuilt every frame (it has to be - the cone geometry depends on raycast hit distances), but it is now rebuilt into preallocated arrays rather than fresh ones.
-
-**Secondary tuning** - velocity-aware hearing was added to `GuardSensor` so that a stationary or sneaking player produces no hearing events. Below the `hearingSpeedThreshold` (1.5 m/s default) the hearing check is suppressed, which trimmed the rate at which `SuspicionSystem` was performing its accumulate/decay work even though the saving here is marginal compared to the cone fix.
-
-**Tick-rate management decisions** - the BT runs at 10 Hz via coroutine; the sensor runs every frame because perception responsiveness matters more than its cost; the vision cone mesh rebuild runs every frame because it follows the guard's rotation; the floor-finding raycast in `GuardVisionCone` runs every frame but is a single raycast.
+The mesh is still rebuilt every frame (cone geometry depends on raycast hit distances, which change with guard rotation), but it is now rebuilt into preallocated arrays rather than fresh ones.
 
 ## Outcome
-The after and fixed captures show the GC Allocated In Frame stripe for the cone path replaced with a flat line - the cone is no longer a per-frame allocator. The remaining GC noise visible in the fixed capture is incidental work elsewhere in the engine and not part of the AI stack.
+The Fixed capture shows `GuardVisionCone.LateUpdate` at **0 B GC Alloc** per call, **0.14 ms time / 0.09 ms self**, total 3.9% of the CPU frame. The GC pause spikes in the baseline trace no longer correlate with cone updates. Frame time settles around 3.67 ms (≈270 fps headroom) in editor.
 
-Frame time stays stable in editor and standalone build at the target framerate. The cone is still the most expensive single component in the AI stack (240 raycasts per frame is genuinely the cost it advertises), but it is no longer the GC hotspot it was.
+| Metric | Before (baseline) | Fixed (cached buffers) |
+|---|---|---|
+| GC Alloc per cone update | 1.0–1.3 KB | **0 B** |
+| Cone `Self ms` per call | 0.08–0.12 ms | 0.09 ms |
+| Frame time around cone call | Spike to 21+ ms during GC | Stable, no spike attributable to cone |
+| Steady-state CPU | 3.47 ms | 3.67 ms |
 
-## Edge-case robustness encountered during profiling
-- **LKP off-mesh**: investigation could fail instantly when the player's transform sat just below the NavMesh surface. Resolved by snapping `LastKnownPosition` through `NavMesh.SamplePosition` inside `GuardSensor` before writing it to the Blackboard.
-- **Path resolution latency**: a fresh `SetDestination` does not always produce `HasValidPath == true` on the next tick. Resolved with a 1-second grace window in `LeafInvestigate` before declaring path failure, preventing premature Patrol fallback.
-- **Stunned-target loop (network module, kept here as note)**: a separate but related profiling observation - the network guard's catch logic refreshed the stun deadline on every catch cooldown cycle. Fixed by guarding `CatchPlayer` against re-stunning an already-stunned target and forcing `ReturnToPatrol` after a successful catch.
+The per-call time is essentially unchanged (the work was always cheap; the allocation was the problem). What changed is that the cone no longer feeds the GC, so collection pauses caused by cone allocation no longer appear in the CPU trace.
+
+## Tick-rate management
+Justifications committed in code and tooltip:
+- **BT**: 10 Hz coroutine - decision-making does not need frame-rate granularity, and the BT writes the active-node string only.
+- **Sensor**: every frame - perception responsiveness matters; the LOS raycast is one shot per frame.
+- **Vision cone mesh rebuild**: every frame - geometry is rotation-dependent; this is the cost the profiling measured.
+- **Floor-snap raycast** (cone + hearing ring positioning): every frame - one raycast, negligible cost.
+
+## Edge-case robustness encountered during development
+- **LKP off-mesh**: investigation could fail instantly when the player's transform sat fractionally below the NavMesh surface. `agent.SetDestination` would accept the off-mesh point and pathing returned `PathPartial`. Resolved by snapping `LastKnownPosition` through `NavMesh.SamplePosition` inside `GuardSensor` before writing it to the Blackboard.
+- **Path resolution latency**: even after the snap fix, `HasValidPath` could return false on the BT tick immediately after `SetDestination`. Resolved with a 1-second `pathWaitDeadline` grace window in `LeafInvestigate` before declaring path failure, preventing premature Patrol fallback.
+- **Investigate gate starvation**: with `CooldownDecorator` outside `ConditionalAbortDecorator`, every below-threshold suspicion tick was arming the cooldown and locking Investigate out for the next 5 seconds. Resolved by inverting the wrap order so the condition is checked first and the cooldown only ticks (and only arms) when the condition is true.
