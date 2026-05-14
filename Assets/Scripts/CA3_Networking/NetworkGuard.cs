@@ -21,7 +21,7 @@ namespace CA3.Networking
 
         [Header("Catch")]
         [SerializeField] private float catchCooldown = 2f;
-        [SerializeField] private float stunDuration = 5f;
+        [SerializeField] private float stunDuration = 2f;
 
         [Header("Performance")]
         [SerializeField] private int perceptionTickInterval = 4;
@@ -71,7 +71,10 @@ namespace CA3.Networking
             }
             else if (State == GuardState.Chase && currentTarget != null)
             {
-                closestPlayer = currentTarget;
+                //skip the cached target on off-ticks if they're stunned, otherwise we'd never break chase
+                var cachedStun = currentTarget.GetComponent<NetworkPlayerStun>();
+                if (cachedStun == null || !cachedStun.IsStunned)
+                    closestPlayer = currentTarget;
             }
 
             if (closestPlayer != null)
@@ -139,11 +142,16 @@ namespace CA3.Networking
 
         private void CatchPlayer(NetworkObject playerObject)
         {
-            nextCatchAllowedAt = Time.time + catchCooldown;
-
             var stun = playerObject.GetComponent<NetworkPlayerStun>();
+            //don't refresh stun on an already-stunned player — that's what was perma-locking them
+            if (stun != null && stun.IsStunned) return;
+
+            nextCatchAllowedAt = Time.time + catchCooldown;
             if (stun != null)
                 stun.RPC_ApplyStun(stunDuration);
+
+            //back off after a catch so the player gets their full stun window to recover
+            ReturnToPatrol();
         }
 
         private NetworkObject FindClosestPlayerInRange()

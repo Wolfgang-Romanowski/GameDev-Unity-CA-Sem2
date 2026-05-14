@@ -45,7 +45,7 @@
 - **Two clients join the same session** - Photon session name defaults to `CA3-Heist` (`sessionName` field in `NetworkBootstrap.cs` - Inspector-overridable)
 
 ### Player objective
-Collect three pickup orbs before the other player. A guard NPC patrols the arena and will chase any player that enters its detection range - if caught, the player is stunned for 5 seconds. First player to reach 3 pickups wins.
+Collect three pickup orbs before the other player. A guard NPC patrols the arena and will chase any player that enters its detection range - if caught, the player is stunned for 2 seconds. First player to reach 3 pickups wins.
 
 ### Authentication setup
 Authentication runs automatically on Play. The pipeline is:
@@ -58,7 +58,7 @@ Authentication runs automatically on Play. The pipeline is:
 **Note:** The Azure Function and Photon App ID are active for submission. Both will be taken down after marking.
 
 ### Profiling evidence
-See `Docs/ProfilerCaptures/` for before/after captures (`CA3_Network_Profile_Before.png`, `CA3_Network_Profile_After.png`) and `Docs/CA3_ProfilingPack/ProfilingNotes.md` for the accompanying analysis. Profiling notes cover the guard perception tick-rate optimisation (64 Hz → 16 Hz) and the resulting frame time reduction.
+See `Docs/CA3_ProfilingPack/` for the before/after captures (`CA3_Network_Profile_Before.png`, `CA3_Network_Profile_After.png`) and `ProfilingNotes.md` for the accompanying analysis. Profiling notes cover the guard perception tick-rate optimisation (64 Hz → 16 Hz) and the resulting frame time reduction.
 
 ---
 
