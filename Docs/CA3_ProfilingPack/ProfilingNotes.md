@@ -1,7 +1,6 @@
 # CA3 Network - Profiling Notes
 
 ## Captures
-Located in `Docs/ProfilerCaptures/`:
 - `CA3_Network_Profile_Before.png` - baseline, guard perception running every tick
 - `CA3_Network_Profile_After.png` - optimised, perception throttled to every 4th tick
 
