@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/CA3_Network.unity
+    path: Assets/Scenes/02_VerticalSlice/CA3_Network.unity
     guid: 05515604e8983c64496eab6b2f0194e8
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity

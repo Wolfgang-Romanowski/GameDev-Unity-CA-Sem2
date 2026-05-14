@@ -25,7 +25,7 @@
 ## CA3 - Advanced 3D Game Development (Networking Vertical Slice)
 
 **Branch:** `feature/ca3-network`
-**Scene:** `Assets/Scenes/CA3_Network.unity`
+**Scene:** `Assets/Scenes/02_VerticalSlice/CA3_Network.unity` *(module-standard location per CA3 handout §6)*
 **Tag:** `ca3-submit` *(applied at final submission)*
 
 ### Packages used
@@ -36,7 +36,7 @@
 
 ### How to run
 1. Open the project in Unity 6.3
-2. Load `Assets/Scenes/CA3_Network.unity`
+2. Load `Assets/Scenes/02_VerticalSlice/CA3_Network.unity`
 3. Press Play - Unity Authentication signs in automatically (anonymous, no credentials required)
 4. For two-client testing: build a standalone Windows player (File → Build and Run), then press Play in the Editor. Both clients join the same Photon session automatically
 
@@ -65,7 +65,7 @@ See `Docs/CA3_ProfilingPack/` for the before/after captures (`CA3_Network_Profil
 ## CA3 - AI for Games (Behaviour Tree Vertical Slice)
 
 **Branch:** `feature/ca3-ai`
-**Scene:** `Assets/Scenes/CA3.unity`
+**Scene:** `Assets/Scenes/02_VerticalSlice/CA3.unity` *(module-standard location per CA3 handout §6)*
 **Tag:** `ca3-submit-ai`
 
 ### Packages used
@@ -74,7 +74,7 @@ See `Docs/CA3_ProfilingPack/` for the before/after captures (`CA3_Network_Profil
 
 ### How to run
 1. Open the project in Unity 6.3
-2. Load `Assets/Scenes/CA3.unity`
+2. Load `Assets/Scenes/02_VerticalSlice/CA3.unity`
 3. Press Play
 4. Press **F1** to toggle the debug overlay
 
@@ -149,7 +149,7 @@ Photon Fusion 2 Host/Client pickup feature. See `Docs/CA2_Network_Docs/` for pla
 - **AI Navigation (NavMesh)** - Unity Technologies. com.unity.ai.navigation via Package Manager
 
 ### CA3 AI module - custom implementations
-- Behaviour Tree framework (BTSelector, BTSequence, ConditionNode, ActionNode, CooldownDecorator, TimeoutDecorator, ConditionalAbortDecorator) - original implementation, Wolfgang Romanowski
+- Behaviour Tree framework (BTSelector, BTSequence, ConditionNode, LeafPatrol, LeafInvestigate, LeafChase, LeafSearch, CooldownDecorator, TimeoutDecorator, ConditionalAbortDecorator) - original implementation, Wolfgang Romanowski
 - SuspicionSystem, GuardBT, GuardAI, GuardSensor, GuardMovement - original implementation, Wolfgang Romanowski
 
 ### CA1 Game Dev - shader
